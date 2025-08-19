@@ -1,0 +1,22 @@
+Ali@Mac TaskManager % touch .gitignore
+Ali@Mac TaskManager % # macOS
+.DS_Store
+
+# IDE
+.idea/
+.vs/
+*.user
+*.DotSettings.user
+
+# Build
+bin/
+obj/
+[Bb]uild/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+_ReSharper*/
+
+
