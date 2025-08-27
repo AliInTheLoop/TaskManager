@@ -35,6 +35,9 @@ class Program
                 case "5" :
                     MarkTaskAsCompleted();
                     break;
+                case "6":
+                    SearchTaskTitle();
+                    break;
                 case "8":
                     Exit();
                     return;
@@ -52,6 +55,7 @@ class Program
         Console.WriteLine("3. Update task");
         Console.WriteLine("4. Delete task");
         Console.WriteLine("5. Mark Task as completed");
+        Console.WriteLine("6. Search Task by Title");
         // More options to be implemented
         Console.WriteLine("8. Save & Exit");
         Console.Write("Choose an option: ");
@@ -93,31 +97,27 @@ class Program
         TaskStorage.SaveTasks(service.GetAll());
         Console.WriteLine("Tasks saved. Goodbye!");
     }
-
+    
     static void UpdateTask()
     {
-        var updatedTasks = service.GetAll();
+        // 1. User nach der ID fragen
+        Console.Write("Enter the ID of the task you want to update: ");
         var input = Console.ReadLine();
 
-        if (int.TryParse(input, out int id))
+        if (!int.TryParse(input, out var id))
         {
-            service.UpdateTask(updatedTasks, id);
+            Console.WriteLine("Invalid ID.");
+            return;
         }
-        Console.WriteLine("Invalid input. Please enter a valid number.");
+        
+        var allTasks = service.GetAll();
+        
+        service.UpdateTask(allTasks, id);
     }
 
     static void DeleteTask()
     {
-        service.Load(new List<TaskItem> {
-            new TaskItem { Id = 2, Title = "Test1" },
-            new TaskItem { Id = 5, Title = "Test2" },
-            new TaskItem { Id = 10, Title = "Test3" }
-        });
-        var ids = new List<int>{ 2,5,10 };
-        foreach (var id in ids)
-        {
-            service.DeleteTask(id);
-        }
+        service.DeleteTask();
     }
 
     static void MarkTaskAsCompleted()
@@ -135,5 +135,10 @@ class Program
         {
             service.MarkTaskAsCompleted(id);
         }
+    }
+    
+    static void SearchTaskTitle()
+    {
+        service.SearchTaskByTitle();
     }
 }

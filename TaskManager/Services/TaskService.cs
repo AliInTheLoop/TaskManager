@@ -1,5 +1,4 @@
 ﻿using TaskManager.Models;
-using TaskStatus = TaskManager.Models.TaskStatus;
 
 namespace TaskManager.Services
 {
@@ -24,8 +23,6 @@ namespace TaskManager.Services
         }
 
         // TODO: Add methods like UpdateTask, DeleteTask, FilterTasks, etc.
-
-
         public void ViewAllTasks()
         {
             foreach (var task in tasks)
@@ -38,7 +35,7 @@ namespace TaskManager.Services
                 Console.WriteLine($"Status: {task.Status}");
             }
         }
-
+        
         public void UpdateTask(List<TaskItem> taskFromOutside, int id)
         {
             //Lambda separates the parameter from the expression, t => expression
@@ -130,16 +127,16 @@ namespace TaskManager.Services
                 Console.WriteLine("Enter a Status: (Pending/ Completed): ");
                 var inputStatus = Console.ReadLine();
 
-                Enum.TryParse<TaskStatus>(inputStatus, true, out var status);
+                Enum.TryParse<TaskManager.Models.TaskStatus>(inputStatus, true, out var status);
                 {
                     task.Status = status;
 
                     switch (status)
                     {
-                        case TaskStatus.Pending:
+                        case TaskManager.Models.TaskStatus.Pending:
                             Console.WriteLine("Updated Status: Pending");
                             break;
-                        case TaskStatus.Completed:
+                        case TaskManager.Models.TaskStatus.Completed:
                             Console.WriteLine("Updated Status: Completed");
                             break;
                     }
@@ -150,37 +147,31 @@ namespace TaskManager.Services
         }
 
         //Delete task
-        public void DeleteTask(int id)
+        public void DeleteTask()
         {
-            while (true)
+            Console.WriteLine("Enter a ID to delete:  (type no to quit)");
+            var input = Console.ReadLine();
+            if (input == "no")
             {
-                var task = tasks.FirstOrDefault(t => t.Id == id);
-                
-                Console.WriteLine($"Enter a ID to delete:  (type no to quit)");
-                var input = Console.ReadLine();
-                if (input == "no")
+                Console.WriteLine("Goodbye.");
+                return;
+            }
+
+            if (int.TryParse(input, out var idToDelete))
+            {
+                var taskToDelete = tasks.FirstOrDefault(t => t.Id == idToDelete);
+
+                if (taskToDelete != null)
                 {
-                    Console.WriteLine("Goodbye.");
-                    Environment.Exit(0);
+                    tasks.Remove(taskToDelete);
+                    Console.WriteLine($"Your task with the {idToDelete} was deleted"); 
                 }
-
-                if (int.TryParse(input, out var idToDelete))
-                {
-                    var taskToDelete = tasks.FirstOrDefault(t => t.Id == idToDelete);
-
-                    if (taskToDelete != null)
-                    {
-                        tasks.Remove(taskToDelete);
-                        Console.WriteLine($"Your task with the {idToDelete} was deleted"); 
-                        break;
-                    }
-                    Console.WriteLine($"No task with this ID was found"); 
+                Console.WriteLine($"No task with this ID {taskToDelete} was found"); 
                     
-                }
-                else
-                {
-                    Console.WriteLine("Invalid input. Please enter a number");
-                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a number");
             }
         }
 
@@ -193,9 +184,28 @@ namespace TaskManager.Services
                 Console.WriteLine($"No task with {id} was found");
             }
             
-            var completed = singleTask.Status == TaskStatus.Completed;
+            var completed = singleTask.Status == Models.TaskStatus.Completed;
             Console.WriteLine($"Task, {completed} marked as completed");
             return completed ? singleTask : null;
+        }
+        
+
+        public void SearchTaskByTitle()
+        {
+            var taskTitle = new List<TaskItem>
+            {
+                new TaskItem { Id = 1, Title = "Gym" },
+                new TaskItem { Id = 2, Title = "Study" },
+                new TaskItem { Id = 3, Title = "School" }
+            };
+
+            Console.Write("Enter a Title: ");
+            var getTitleFromUser = Console.ReadLine();
+
+            var first = taskTitle.FirstOrDefault(t =>
+                t.Title.Equals(getTitleFromUser, StringComparison.OrdinalIgnoreCase));
+
+            Console.WriteLine(first != null ? $"Found: {first.Title}" : "No task with this title found!");
         }
     }
 }
