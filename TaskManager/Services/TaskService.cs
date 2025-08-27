@@ -1,4 +1,5 @@
 ﻿using TaskManager.Models;
+using TaskStatus = TaskManager.Models.TaskStatus;
 
 namespace TaskManager.Services
 {
@@ -103,12 +104,15 @@ namespace TaskManager.Services
                     {
                         case TaskPriority.Low:
                             Console.ForegroundColor = ConsoleColor.Gray;
+                            Console.WriteLine($"Updated Priority: {task.Priority}");
                             break;
                         case TaskPriority.Medium:
                             Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine($"Updated Priority: {task.Priority}");
                             break;
                         case TaskPriority.High:
                             Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"Updated Priority: {task.Priority}");
                             break;
                     }
                     Console.ForegroundColor = ConsoleColor.White;
@@ -127,16 +131,16 @@ namespace TaskManager.Services
                 Console.WriteLine("Enter a Status: (Pending/ Completed): ");
                 var inputStatus = Console.ReadLine();
 
-                Enum.TryParse<TaskManager.Models.TaskStatus>(inputStatus, true, out var status);
+                Enum.TryParse<TaskStatus>(inputStatus, true, out var status);
                 {
                     task.Status = status;
 
                     switch (status)
                     {
-                        case TaskManager.Models.TaskStatus.Pending:
+                        case TaskStatus.Pending:
                             Console.WriteLine("Updated Status: Pending");
                             break;
-                        case TaskManager.Models.TaskStatus.Completed:
+                        case TaskStatus.Completed:
                             Console.WriteLine("Updated Status: Completed");
                             break;
                     }
@@ -175,19 +179,30 @@ namespace TaskManager.Services
             }
         }
 
-        public TaskItem? MarkTaskAsCompleted(int id)
+        public void MarkTaskAsCompleted()
         {
-            var singleTask = tasks.FirstOrDefault(t => t.Id == id);
-
-            if (singleTask == null)
-            {
-                Console.WriteLine($"No task with {id} was found");
-            }
+            Console.WriteLine("What task would you mark as complete? ");
+            var userInput = Console.ReadLine();
             
-            var completed = singleTask.Status == Models.TaskStatus.Completed;
-            Console.WriteLine($"Task, {completed} marked as completed");
-            return completed ? singleTask : null;
+            if (int.TryParse(userInput, out var idToMark))
+            {
+                foreach (var task in tasks)
+                {
+                    if (task.Id == idToMark)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Marked task with the {idToMark} as completed");
+                        Console.ResetColor();
+                       
+                        break;
+                    } 
+                }
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"No task with this ID {idToMark} was found");
+                Console.ResetColor();
+            }
         }
+    
         
 
         public void SearchTaskByTitle()

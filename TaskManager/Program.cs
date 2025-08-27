@@ -122,19 +122,7 @@ class Program
 
     static void MarkTaskAsCompleted()
     {
-        service.Load(new List<TaskItem> {
-            new TaskItem { Id = 2, Title = "Test1" },
-            new TaskItem { Id = 5, Title = "Test2" },
-            new TaskItem { Id = 10, Title = "Test3" }
-        });
-
-        var completedTask = new List<int> { 2, 5, 10 };
-        service.MarkTaskAsCompleted(2);
-
-        foreach (var id in completedTask)
-        {
-            service.MarkTaskAsCompleted(id);
-        }
+        service.MarkTaskAsCompleted();
     }
     
     static void SearchTaskTitle()
