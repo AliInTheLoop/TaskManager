@@ -181,46 +181,31 @@ namespace TaskManager.Services
 
         public void MarkTaskAsCompleted()
         {
-            Console.WriteLine("What task would you mark as complete? ");
+            Console.Write("What task would you mark as complete? ");
             var userInput = Console.ReadLine();
-            
-            if (int.TryParse(userInput, out var idToMark))
+
+            if (!int.TryParse(userInput, out var idToMark)) return;
+
+            var task = tasks.FirstOrDefault(t => t.Id == idToMark);
+
+            if (task != null)
             {
-                foreach (var task in tasks)
-                {
-                    if (task.Id == idToMark)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"Marked task with the {idToMark} as completed");
-                        Console.ResetColor();
-                       
-                        break;
-                    } 
-                }
+                task.Status = TaskStatus.Completed; 
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Task '{task.Title}' (ID {task.Id}) marked as completed");
+                Console.ResetColor();
+            }
+            else
+            {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"No task with this ID {idToMark} was found");
+                Console.WriteLine($"No task with ID {idToMark} was found");
                 Console.ResetColor();
             }
         }
-    
         
-
         public void SearchTaskByTitle()
         {
-            var taskTitle = new List<TaskItem>
-            {
-                new TaskItem { Id = 1, Title = "Gym" },
-                new TaskItem { Id = 2, Title = "Study" },
-                new TaskItem { Id = 3, Title = "School" }
-            };
-
-            Console.Write("Enter a Title: ");
-            var getTitleFromUser = Console.ReadLine();
-
-            var first = taskTitle.FirstOrDefault(t =>
-                t.Title.Equals(getTitleFromUser, StringComparison.OrdinalIgnoreCase));
-
-            Console.WriteLine(first != null ? $"Found: {first.Title}" : "No task with this title found!");
+            
         }
     }
 }
