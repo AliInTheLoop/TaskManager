@@ -36,7 +36,7 @@ namespace TaskManager.Services
                 Console.WriteLine($"Status: {task.Status}");
             }
         }
-        
+
         public void UpdateTask(List<TaskItem> taskFromOutside, int id)
         {
             //Lambda separates the parameter from the expression, t => expression
@@ -65,12 +65,14 @@ namespace TaskManager.Services
                     task.Description = newDescription;
                     Console.WriteLine($"Updated Description: {task.Description}");
                     break;
-                } 
+                }
+
                 if (input == "no")
                 {
                     Console.WriteLine("Description not changed! ");
                     break;
                 }
+
                 Console.WriteLine("Please type yes or no: ");
             }
 
@@ -87,6 +89,7 @@ namespace TaskManager.Services
                     Console.WriteLine($"Updated Due Date: {dueDate:d}");
                     break;
                 }
+
                 Console.WriteLine("Invalid input. Please type yyyy/MM/dd");
             }
 
@@ -115,6 +118,7 @@ namespace TaskManager.Services
                             Console.WriteLine($"Updated Priority: {task.Priority}");
                             break;
                     }
+
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine($"Updated Priority: {task.Priority}");
                     break;
@@ -144,6 +148,7 @@ namespace TaskManager.Services
                             Console.WriteLine("Updated Status: Completed");
                             break;
                     }
+
                     Console.WriteLine($"Updated Status: {status}");
                     break;
                 }
@@ -158,41 +163,41 @@ namespace TaskManager.Services
             if (input == "no")
             {
                 Console.WriteLine("Goodbye.");
-                return;
             }
 
-            if (int.TryParse(input, out var idToDelete))
-            {
-                var taskToDelete = tasks.FirstOrDefault(t => t.Id == idToDelete);
+            if (!int.TryParse(input, out var idToDelete)) return;
+            var taskToDelete = tasks.FirstOrDefault(t => t.Id == idToDelete);
 
-                if (taskToDelete != null)
-                {
-                    tasks.Remove(taskToDelete);
-                    Console.WriteLine($"Your task with the {idToDelete} was deleted"); 
-                }
-                Console.WriteLine($"No task with this ID {taskToDelete} was found"); 
-                    
+            if (taskToDelete != null)
+            {
+                tasks.Remove(taskToDelete);
+                Console.WriteLine($"Your task with the {idToDelete} was deleted");
             }
             else
             {
-                Console.WriteLine("Invalid input. Please enter a number");
+                Console.WriteLine($"No task with this ID {taskToDelete} was found");
             }
         }
 
         public void MarkTaskAsCompleted()
         {
-            Console.Write("What task would you mark as complete? ");
-            var userInput = Console.ReadLine();
+            Console.Write("Enter a Id to mark a task as completed: ");
+            var userTaskInput = Console.ReadLine()?.Trim().ToUpper();
 
-            if (!int.TryParse(userInput, out var idToMark)) return;
-
-            var task = tasks.FirstOrDefault(t => t.Id == idToMark);
-
-            if (task != null)
+            if (userTaskInput == null || string.IsNullOrWhiteSpace(userTaskInput))
             {
-                task.Status = TaskStatus.Completed; 
+                Console.WriteLine("Please enter a valid ID");
+            }
+
+            if (!int.TryParse(userTaskInput, out var idToMark)) return;
+
+            var taskCompleted = tasks.FirstOrDefault(t => t.Id == idToMark);
+
+            if (taskCompleted != null)
+            {
+                taskCompleted.Status = TaskStatus.Completed;
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Task '{task.Title}' (ID {task.Id}) marked as completed");
+                Console.WriteLine($"Task '{taskCompleted.Title}' (ID {taskCompleted.Id}) marked as completed");
                 Console.ResetColor();
             }
             else
@@ -202,10 +207,24 @@ namespace TaskManager.Services
                 Console.ResetColor();
             }
         }
-        
+
         public void SearchTaskByTitle()
         {
-            
+            while (true)
+            {
+                Console.WriteLine("Enter a Title: ");
+                var inputTitle = Console.ReadLine()?.Trim();
+                
+                
+                var taskTitle = tasks.FirstOrDefault(t => string.Equals(t.Title, inputTitle, StringComparison.OrdinalIgnoreCase));
+
+                if (taskTitle == null)
+                {
+                    Console.WriteLine($"No task with this title {inputTitle} was found");
+                }
+                Console.WriteLine($"Title: {taskTitle.Title} was found."); 
+                break;
+            }
         }
     }
 }
